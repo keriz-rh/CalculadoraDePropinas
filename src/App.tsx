@@ -1,12 +1,13 @@
+import { useReducer } from "react";
 import MenuItem from "./components/MenuItem"
 import OrderContents from "./components/OrderContents";
 import OrderTotals from "./components/OrderTotals";
 import TipPorcentageForm from "./components/TipPorcentageForm";
 import { menuItems } from "./data/db"
-import useOrder from "./hook/useOrder"
+import { orderReducer, initialState } from "./reducer/order-reducer";
 
 function App() {
-  const { order, addItem, removeItem, tip, setTip, placeOrder } = useOrder();
+  const [state, dispatch] = useReducer(orderReducer, initialState)
 
   return (
     <>
@@ -16,7 +17,6 @@ function App() {
 
       <main className="max-w-7xl mx-auto p-5 grid md:grid-cols-2 gap-5">
         
-        {/* Sección del Menú */}
         <div className="bg-white p-5 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold">Menú</h2>
           <div className="space-y-5 mt-10 max-h-200 overflow-y-scroll">
@@ -24,30 +24,29 @@ function App() {
               <MenuItem 
                 key={item.id} 
                 item={item}
-                addItem={addItem}
+                dispatch= {dispatch}
               />
             ))}
           </div>
         </div>
 
-        {/* Sección del Pedido */}
         <div className="bg-white p-5 rounded-lg shadow-md">
-          {order.length > 0 ? (
+          {state.order.length > 0 ? (
             <>
               <OrderContents 
-                order={order}
-                removeItem={removeItem}  
+                order={state.order}
+                dispatch={dispatch}          
               />
 
               <TipPorcentageForm
-                setTip={setTip}
-                tip={tip}
+                dispatch={dispatch}
+                tip={state.tip}
               />
 
               <OrderTotals 
-                order={order} 
-                tip={tip}
-                placeOrder={placeOrder} 
+                order={state.order} 
+                tip={state.tip}
+                dispatch={dispatch} 
               />
             </>
           ) : (
